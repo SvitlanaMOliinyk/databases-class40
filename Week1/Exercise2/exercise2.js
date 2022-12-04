@@ -4,7 +4,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "hyfuser",
   password: "hyfpassword",
-  database: "new_world",
+  database: "world",
 });
 
 db.connect();
@@ -63,64 +63,49 @@ db.query(
 );
 
 db.query(
-    `SELECT name FROM city
+  `SELECT name FROM city
     WHERE countryCode = 'NLD'`,
-    function (error, results, fields) {
-      if (error) throw error;
-      console.log(
-        "The names of all the cities in the Netherlands: ",
-        results
-      );
-    }
-  );
+  function (error, results, fields) {
+    if (error) throw error;
+    console.log("The names of all the cities in the Netherlands: ", results);
+  }
+);
 
-  db.query(
-    `SELECT name, population FROM city
+db.query(
+  `SELECT name, population FROM city
     WHERE name = 'Rotterdam'`,
-    function (error, results, fields) {
-      if (error) throw error;
-      console.log(
-        "The population of Rotterdam: ",
-        results
-      );
-    }
-  );
+  function (error, results, fields) {
+    if (error) throw error;
+    console.log("The population of Rotterdam: ", results);
+  }
+);
 
-  db.query(
-    `SELECT name, surfaceArea FROM country
+db.query(
+  `SELECT name, surfaceArea FROM country
     ORDER BY surfaceArea DESC
     LIMIT 10`,
-    function (error, results, fields) {
-      if (error) throw error;
-      console.log(
-        "The top 10 countries by Surface Area: ",
-        results
-      );
-    }
-  );
+  function (error, results, fields) {
+    if (error) throw error;
+    console.log("The top 10 countries by Surface Area: ", results);
+  }
+);
 
-  db.query(
-    `SELECT name, population FROM city
+db.query(
+  `SELECT name, population FROM city
     ORDER BY population DESC
     LIMIT 10`,
-    function (error, results, fields) {
-      if (error) throw error;
-      console.log(
-        "The  top 10 most populated cities: ",
-        results
-      );
-    }
-  );
+  function (error, results, fields) {
+    if (error) throw error;
+    console.log("The  top 10 most populated cities: ", results);
+  }
+);
 
-  db.query(
-    `SELECT SUM(population) FROM country`,
-    function (error, results, fields) {
-      if (error) throw error;
-      console.log(
-        "The population number of the world: ",
-        results
-      );
-    }
-  );
+db.query(
+  `SELECT SUM(population) FROM country`,
+  function (error, results, fields) {
+    if (error) throw error;
+    console.log("The population number of the world: ", results);
+  }
+);
 
 db.end();
