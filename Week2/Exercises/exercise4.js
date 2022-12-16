@@ -1,31 +1,30 @@
 const { db, execQuery } = require("./db");
 
-const countAuthors = `SELECT COUNT(DISTINCT author_id), COUNT(DISTINCT paper_id)
-FROM authors_papers;`;
+const countAuthors = `SELECT DISTINCT paper_title, count(authors.author_id)
+FROM  authors_papers
+LEFT JOIN authors ON authors.author_id = authors_papers.author_id
+LEFT JOIN research_papers ON research_papers.paper_id = authors_papers.paper_id
+GROUP BY paper_title;`;
 
-const countFemale = `SELECT count(*)paper_title
+const countFemale = `SELECT COUNT(DISTINCT paper_title)
 FROM authors_papers
 JOIN authors ON authors.author_id = authors_papers.author_id
 JOIN research_papers ON research_papers.paper_id = authors_papers.paper_id
-WHERE gender LIKE "f%";`;
+WHERE gender = "f";`;
 
-const hirschAVG = `SELECT AVG(h_index), university 
-FROM authors
+const hirschAVG = `SELECT university, AVG(h_index)
+FROM authors                       
 GROUP BY university;`;
 
-const universityPapers = `SELECT Count(paper_title), university
+const universityPapers = `SELECT university, count(DISTINCT paper_title)
 FROM authors_papers
 JOIN authors ON authors.author_id = authors_papers.author_id
 JOIN research_papers ON research_papers.paper_id = authors_papers.paper_id
 GROUP BY university;`;
 
-const minMax = `SELECT university, h_index
+const minMax = `SELECT university, MIN(h_index), MAX(h_index)
 FROM authors
-WHERE h_index IN (SELECT MIN(h_index) FROM authors)
-UNION
-SELECT university, h_index 
-FROM authors
-WHERE h_index IN (SELECT MAX(h_index) FROM authors);`;
+GROUP BY university;`;
 
 async function queryDB() {
   db.connect();
@@ -61,7 +60,6 @@ async function queryDB() {
     );
   } catch (error) {
     console.error(error);
-    db.end();
   }
   db.end();
 }
