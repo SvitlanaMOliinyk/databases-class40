@@ -1,19 +1,16 @@
 const { db, execQuery } = require("./db");
 
+const balanceFromPickedAccount = `SELECT balance FROM account WHERE account_number = ?`;
+const arrangedUpdatingPickedAccount = `UPDATE account SET balance = ? WHERE account_number = ?`;
+
 async function seedDatabase(moneyOutId, moneyInId, moneySum) {
   db.connect();
 
   try {
-    const resultOut = await execQuery(
-      "Select balance from account WHERE account_number = ?",
-      [moneyOutId]
-    );
+    const resultOut = await execQuery(balanceFromPickedAccount, [moneyOutId]);
     const moneyOut = JSON.parse(JSON.stringify(resultOut));
     const outPocket = moneyOut[0].balance;
-    const resultIn = await execQuery(
-      "Select balance from account WHERE account_number = ?",
-      [moneyInId]
-    );
+    const resultIn = await execQuery(balanceFromPickedAccount, [moneyInId]);
     const moneyIn = JSON.parse(JSON.stringify(resultIn));
     const inPocket = moneyIn[0].balance;
     const outBalance = outPocket - moneySum;
@@ -30,14 +27,8 @@ async function seedDatabase(moneyOutId, moneyInId, moneySum) {
 
     await execQuery("START TRANSACTION");
 
-    await execQuery("UPDATE account SET balance = ? WHERE account_number = ?", [
-      outBalance,
-      moneyOutId,
-    ]);
-    await execQuery("UPDATE account SET balance = ? WHERE account_number = ?", [
-      inBalance,
-      moneyInId,
-    ]);
+    await execQuery(arrangedUpdatingPickedAccount, [outBalance, moneyOutId]);
+    await execQuery(arrangedUpdatingPickedAccount, [inBalance, moneyInId]);
 
     await execQuery(
       "INSERT INTO account_changes (account_number, amount, changed_date, remark) VALUES ?",

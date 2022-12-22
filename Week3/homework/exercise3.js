@@ -10,7 +10,7 @@ const conn = mysql.createConnection({
 function getPopulation(Country, name, code, cb) {
   // assuming that connection to the database is established and stored as conn
   conn.query(
-    "SELECT Population FROM ?? WHERE Name = ? and code = ?",
+    "SELECT Population FROM ?? WHERE Name = ? AND Code = ?",
     [Country, name, code],
     function (err, result) {
       if (err) cb(err);
